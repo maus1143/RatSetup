@@ -20,10 +20,8 @@ for /f "tokens=1,2 delims=}" %%a in ("%response%") do (
 
 echo %latest_py_version%
 
-REM Set the minimum required Python version
 set python_version=%latest_py_version%
 
-REM Check if Python is already installed and if the version is less than python_version
 echo Checking if Python %python_version% or greater is already installed...
 set "current_version="
 where python >nul 2>nul && (
@@ -39,24 +37,17 @@ if "%current_version%"=="" (
     )
 )
 
-REM Define the URL and file name of the Python installer
 set "url=https://www.python.org/ftp/python/%python_version%/python-%python_version%-amd64.exe"
 set "installer=python-%python_version%-amd64.exe"
 
-REM Define the installation directory
-set "targetdir=C:\Python%python_version%"
-
-REM Download the Python installer
 echo Downloading Python installer...
 powershell -Command "(New-Object Net.WebClient).DownloadFile('%url%', '%installer%')"
 
-REM Install Python with a spinner animation
 echo Installing Python...
 start /wait %installer% /quiet /passive TargetDir=%targetdir% Include_test=0 ^ 
 && (echo Done.) || (echo Failed!)
 echo.
 
-REM Add Python to the system PATH
 echo Adding Python to the system PATH...
 setx PATH "%targetdir%;%PATH%"
 if %errorlevel% EQU 1 (
@@ -66,7 +57,6 @@ if %errorlevel% EQU 1 (
 )
 echo Python %python_version% has been successfully installed and added to the system PATH.
 
-REM Cleanup
 echo Cleaning up...
 del %installer%
 
